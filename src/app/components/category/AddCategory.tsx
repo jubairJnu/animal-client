@@ -12,7 +12,9 @@ import {
   Input,
   Link,
 } from "@nextui-org/react";
+import { useState } from "react";
 import { Field, FieldValues, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 const AddCategory = () => {
   const {
@@ -26,13 +28,31 @@ const AddCategory = () => {
 
   // handle her
 
-  const onSubmit = (data: FieldValues) => {
-    console.log(data);
+  const onSubmit = async (data: FieldValues) => {
+    const toastId = toast.loading("Category Adding..");
+    try {
+      const categoryInfo = {
+        name: data?.name,
+      };
+
+      const res = await fetch("https://animal-backend.vercel.app/categories", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(categoryInfo),
+        cache: "no-store",
+      });
+
+      toast.success("Added Successfully", { id: toastId });
+    } catch (error) {
+      toast.error("Something Went Wrong", { id: toastId });
+    }
   };
 
   return (
     <>
-      <Button variant="bordered" onPress={onOpen} >
+      <Button variant="bordered" onPress={onOpen}>
         Add Category
       </Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top-center">
